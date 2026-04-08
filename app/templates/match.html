@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}AI Match - {{ job.title }}{% endblock %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+        <h1>AI Matching — {{ job.title }}</h1>
+        <p>Agent ranked {{ results | length }} candidates by best fit</p>
+    </div>
+    <a href="/hr/jobs/{{ job.id }}/candidates" class="btn btn-secondary">Back to Candidates</a>
+</div>
+
+{% for r in results %}
+<div class="card" style="border-left: 4px solid
+    {% if r.rank == 1 %}#16a34a
+    {% elif r.rank == 2 %}#4f46e5
+    {% elif r.rank == 3 %}#d97706
+    {% else %}#6b7280{% endif %};">
+
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span style="font-size: 20px; font-weight: bold; color: #1a1a2e;">#{{ r.rank }}</span>
+                <h2 style="margin: 0;">{{ r.name }}</h2>
+                <span class="badge
+                    {% if r.final_score >= 80 %}badge-green
+                    {% elif r.final_score >= 60 %}badge-blue
+                    {% elif r.final_score >= 40 %}badge-yellow
+                    {% else %}badge-red{% endif %}">
+                    {{ r.final_score }}/100
+                </span>
+            </div>
+            <p style="margin-bottom: 10px;">{{ r.email }}</p>
+            <p style="color: #374151; font-size: 14px;">{{ r.reason }}</p>
+        </div>
+        <div style="text-align: right; min-width: 140px;">
+            <a href="/hr/candidates/{{ r.id }}/questions?job_id={{ job.id }}" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; margin-bottom: 8px; display: block;">Interview Questions</a>
+            <a href="/hr/candidates/{{ r.id }}/status/shortlisted" class="btn btn-success" style="font-size: 12px; padding: 6px 14px; display: block;">Shortlist</a>
+        </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 15px;">
+        <div>
+            <p style="font-weight: 500; color: #16a34a; margin-bottom: 6px;">Strengths</p>
+            {% for s in r.strengths %}
+                <span class="badge badge-green" style="margin: 2px;">{{ s }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            <p style="font-weight: 500; color: #dc2626; margin-bottom: 6px;">Weaknesses</p>
+            {% for w in r.weaknesses %}
+                <span class="badge badge-red" style="margin: 2px;">{{ w }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

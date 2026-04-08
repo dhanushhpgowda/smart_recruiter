@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}New Job - Smart Recruiter{% endblock %}
+{% block content %}
+<h1>Create New Job</h1>
+<p style="margin-bottom: 25px;">Fill in the job details and share the apply link with candidates.</p>
+
+<div class="card">
+    <form method="POST">
+        <label>Job Title</label>
+        <input type="text" name="title" placeholder="e.g. Python Developer" required/>
+
+        <label>Job Description</label>
+        <textarea name="description" rows="8" placeholder="Paste the full job description here..." required></textarea>
+
+        <button type="submit" class="btn btn-primary">Create Job & Get Apply Link</button>
+    </form>
+</div>
+
+{% if apply_link %}
+<div class="card" style="border: 2px solid #4f46e5;">
+    <h3>Job created! Share this link with candidates:</h3>
+    <div style="background: #f5f3ff; padding: 15px; border-radius: 6px; margin-top: 10px;">
+        <code style="font-size: 15px; color: #4f46e5;">{{ apply_link }}</code>
+    </div>
+    <button onclick="navigator.clipboard.writeText('{{ apply_link }}')" class="btn btn-primary" style="margin-top: 10px;">Copy Link</button>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Candidates - {{ job.title }}{% endblock %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+        <h1>{{ job.title }}</h1>
+        <p>{{ candidates | length }} applications received</p>
+    </div>
+    <a href="/hr/jobs/{{ job.id }}/match" class="btn btn-success">Run AI Match</a>
+</div>
+
+<div class="card">
+    {% if candidates %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Skills</th>
+                <th>Status</th>
+                <th>Applied</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr>
+                <td><strong>{{ candidate.name }}</strong></td>
+                <td>{{ candidate.email }}</td>
+                <td>{{ candidate.phone }}</td>
+                <td>
+                    {% for skill in candidate.parsed_data.get('skills', [])[:3] %}
+                        <span class="badge badge-blue">{{ skill }}</span>
+                    {% endfor %}
+                    {% if candidate.parsed_data.get('skills', []) | length > 3 %}
+                        <span class="badge badge-gray">+{{ candidate.parsed_data.get('skills', []) | length - 3 }} more</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge
+                        {% if candidate.status == 'shortlisted' %}badge-green
+                        {% elif candidate.status == 'rejected' %}badge-red
+                        {% elif candidate.status == 'interview' %}badge-blue
+                        {% else %}badge-gray{% endif %}">
+                        {{ candidate.status | capitalize }}
+                    </span>
+                </td>
+                <td>{{ candidate.submitted_at.strftime('%d %b %Y') }}</td>
+                <td>
+                    <a href="/hr/candidates/{{ candidate.id }}" class="btn btn-secondary" style="font-size:12px; padding: 6px 12px;">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No applications yet. Share the apply link with candidates!</p>
+    <p style="margin-top: 10px;">Apply link: <code>http://127.0.0.1:5000/apply/{{ job.id }}</code></p>
+    {% endif %}
+</div>
+{% endblock %}

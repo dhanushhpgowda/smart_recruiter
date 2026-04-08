@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Apply - {{ job.title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        h1 { color: #333; }
+        input, label { display: block; width: 100%; margin: 10px 0; padding: 8px; }
+        button { background: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 5px; display: none; }
+        .success { background: #e8f5e9; border: 1px solid #4CAF50; }
+        .tip { color: #e65100; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>Apply for {{ job.title }}</h1>
+    <p>{{ job.description[:200] }}...</p>
+
+    <form id="applyForm">
+        <label>Full Name</label>
+        <input type="text" name="name" required placeholder="Your full name"/>
+
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="your@email.com"/>
+
+        <label>Phone</label>
+        <input type="text" name="phone" placeholder="Your phone number"/>
+
+        <label>Upload Resume (PDF or DOCX)</label>
+        <input type="file" name="resume" accept=".pdf,.docx" required/>
+
+        <button type="submit">Submit Application</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("applyForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const res = await fetch(window.location.href, {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            const div = document.getElementById("result");
+            div.style.display = "block";
+            div.className = "success";
+            div.innerHTML = `
+                <h3>${data.message}</h3>
+                <p>Resume Quality Score: <strong>${data.quality_score}/100</strong></p>
+                ${data.tips.map(t => `<p class="tip">💡 ${t}</p>`).join("")}
+            `;
+        });
+    </script>
+</body>
+</html>

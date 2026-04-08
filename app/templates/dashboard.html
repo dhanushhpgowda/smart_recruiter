@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Smart Recruiter{% endblock %}
+{% block content %}
+<h1>Welcome back, {{ hr.name }}!</h1>
+<p style="margin-bottom: 25px;">Here's an overview of your recruitment activity.</p>
+
+<div class="grid-3" style="margin-bottom: 25px;">
+    <div class="stat-card">
+        <div class="stat-number">{{ total_jobs }}</div>
+        <div class="stat-label">Active Jobs</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ total_candidates }}</div>
+        <div class="stat-label">Total Applications</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ shortlisted }}</div>
+        <div class="stat-label">Shortlisted</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2>Your Jobs</h2>
+        <a href="/hr/jobs/new" class="btn btn-primary">+ New Job</a>
+    </div>
+    {% if jobs %}
+    <table>
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Applications</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td><strong>{{ job.title }}</strong></td>
+                <td>{{ job.candidates | length }}</td>
+                <td>
+                    {% if job.is_active %}
+                        <span class="badge badge-green">Active</span>
+                    {% else %}
+                        <span class="badge badge-gray">Closed</span>
+                    {% endif %}
+                </td>
+                <td>{{ job.created_at.strftime('%d %b %Y') }}</td>
+                <td>
+                    <a href="/hr/jobs/{{ job.id }}/candidates" class="btn btn-primary" style="font-size:12px; padding: 6px 12px;">View Candidates</a>
+                    <a href="/hr/jobs/{{ job.id }}/match" class="btn btn-success" style="font-size:12px; padding: 6px 12px;">Match</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No jobs yet. <a href="/hr/jobs/new">Create your first job</a></p>
+    {% endif %}
+</div>
+{% endblock %}
